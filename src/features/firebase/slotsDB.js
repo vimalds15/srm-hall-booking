@@ -74,7 +74,7 @@ export const getSlotByIdAndUpdateRejected = async (requestId,userId,status)=>{
 
 
 
-export const getSlotByIdAndUpdateStatus = async (hallId, slotId,requestId,userId,status) => {
+export const getSlotByIdAndUpdateStatus = async (hallId, slotId,requestId,userId,status,faculty,purpose) => {
     try {
       const hallsRef = collection(db, 'halls');
       const hallDocRef = doc(hallsRef, hallId);
@@ -87,7 +87,7 @@ export const getSlotByIdAndUpdateStatus = async (hallId, slotId,requestId,userId
   
       if (slotDoc.exists()) {
         // Update the status property of the slot to "approved." and merge will preserve other properties
-        await setDoc(slotDocRef, { status }, { merge: true });
+        await setDoc(slotDocRef, { status,booked:{name:faculty,purpose} }, { merge: true });
         await updateUserBookingStatus(userId,requestId,status)
         await deleteRequest(requestId)
         return {success:true};

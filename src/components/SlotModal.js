@@ -26,6 +26,7 @@ const SlotModal = ({
   const [loading, setLoading] = useState(false);
   const {currentUser}= useContext(AuthContext)
   const uid = currentUser?.uid;
+  const name=currentUser?.name
 
   const {setBookings} = useContext(BookingContext);
 
@@ -40,7 +41,7 @@ const SlotModal = ({
       purpose: description,
       duration: selectedSlotDuration,
       date: formattedDate,
-      faculty:"Dhanush Sundar S",
+      faculty:name,
       hall:selectedLH,
       hallId
     };

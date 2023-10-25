@@ -3,7 +3,6 @@ import React, { useContext, useEffect, useState } from 'react'
 import { Link, useNavigation } from '@react-navigation/native';
 import Logo from "../../../assets/logo.png"
 import HallCard from '../../../src/components/HallCard'
-import { hallData } from '../../../src/mock/mockData'
 import AuthContext from '../../features/context/authContext';
 import { getHalls } from '../../features/firebase/hallDB';
 
@@ -30,7 +29,7 @@ const HomeScreen = () => {
         <Image source={Logo} style={{marginLeft:15,height:50,width:50}} />
       )
     })
-  },[])
+  },[currentUser?.uid])
 
   return (
     <View style={{flex:1,backgroundColor:"#fff",padding:15}}>

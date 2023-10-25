@@ -5,13 +5,16 @@ import { useNavigation } from '@react-navigation/native'
 import { useRoute } from '@react-navigation/native'
 import { getSlots } from '../../features/firebase/slotsDB'
 import SlotModal from '../../components/SlotModal'
+import InfoModal from '../../components/InfoModal'
 
 const DetailScreen = () => {
   const [slots,setSlots] = useState(null)
   const [modalVisible,setModalVisible]=useState(false)
+  const [modalInfoVisible,setModalInfoVisible]=useState(false)
   const [selectedSlot,setSelectedSlot]=useState(null)
   const [selectedSlotId,setSelectedSlotId]=useState(null)
   const [selectedSlotDuration,setSelectedSlotDuration]=useState(null)
+  const [bookedBy,setBookedBy]=useState(null)
 
   const navigation = useNavigation()
   const {params} = useRoute();
@@ -24,11 +27,16 @@ const DetailScreen = () => {
     setSlots(res);
   }
 
-  const slotClickHandler = (slotId,name,duration) => {
-    setModalVisible(!modalVisible)
-    setSelectedSlotId(slotId)
-    setSelectedSlot(name)
-    setSelectedSlotDuration(duration)
+  const slotClickHandler = (slotId,name,duration,status,booked) => {
+    if(status!=="booked"){
+      setModalVisible(!modalVisible)
+      setSelectedSlotId(slotId)
+      setSelectedSlot(name)
+      setSelectedSlotDuration(duration)
+    }else{
+      setModalInfoVisible(!modalInfoVisible)
+      setBookedBy(booked)
+    }
   }
 
   useEffect(()=> {
@@ -46,13 +54,13 @@ const DetailScreen = () => {
       <Text style={{marginTop:10, fontWeight:"bold"}}>Choose the Slot</Text>
       <View style={{flexDirection:"row",flexWrap:"wrap",justifyContent:"space-evenly",rowGap:10,marginTop:20}}>
         {slots?.map(slot => 
-        <Pressable onPress={()=>slotClickHandler(slot.id,slot.name,slot.duration)} key={slot.id} style={{width:"40%",borderWidth:1,borderColor:`${slot.status==='booked'?"red":"green"}`,alignSelf:"center",padding:10}}>
+        <Pressable onPress={()=>slotClickHandler(slot.id,slot.name,slot.duration,slot.status,slot?.booked)} key={slot.id} style={{width:"40%",borderWidth:1,borderColor:`${slot.status==='booked'?"red":"green"}`,alignSelf:"center",padding:10}}>
             <Text style={{textAlign:"center"}}>Hour {slot.name}</Text>
             <Text style={{textAlign:"center"}}>{slot.duration}</Text>
         </Pressable>
         )}
       </View>
-      <SlotModal 
+      <SlotModal
         modalVisible={modalVisible}
         setModalVisible={setModalVisible} 
         selectedSlot={selectedSlot}
@@ -60,6 +68,11 @@ const DetailScreen = () => {
         selectedSlotDuration={selectedSlotDuration}
         selectedLH={name}
         hallId={id}
+        />
+        <InfoModal 
+          modalVisible={modalInfoVisible}
+          setModalVisible={setModalInfoVisible}
+          booked={bookedBy}
         />
     </View>
   )

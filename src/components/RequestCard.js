@@ -1,5 +1,5 @@
 import { Pressable, StyleSheet, Text, View, ToastAndroid } from "react-native";
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import {
   getSlotByIdAndUpdateRejected,
   getSlotByIdAndUpdateStatus,
@@ -18,6 +18,7 @@ const RequestCard = ({
   userId,
 }) => {
   const { requests, setRequests } = useContext(HodContext);
+  const [loading,setLoading]=useState(false)
 
   const removeItem = (id) => {
     const newRequests = requests.filter((item) => item.id != id);
@@ -25,27 +26,33 @@ const RequestCard = ({
   };
 
   const approveHandler = async () => {
+    setLoading(true)
     const res = await getSlotByIdAndUpdateStatus(
       hallId,
       slotId,
       id,
       userId,
-      "booked"
+      "booked",
+      faculty,
+      purpose
     );
     if (res.success) {
       removeItem(id);
       console.log("successfully approved");
       ToastAndroid.show("Approved successfully!!", ToastAndroid.BOTTOM);
     }
+    setLoading(false)
   };
 
   const rejectHandler = async () => {
+    setLoading(true)
     const res = await getSlotByIdAndUpdateRejected(id, userId, "rejected");
     if (res.success) {
       removeItem(id);
       console.log("successfully Rejected");
       ToastAndroid.show("Rejected successfully!!", ToastAndroid.BOTTOM);
     }
+    setLoading(false)
   };
 
   return (
